@@ -1,16 +1,15 @@
 # Visium Distance Plotting Tool (Euclidian Distances)
 
-The Visium Distance Plotter is a tool that offers a range of visualizations for analyzing visium single-cell data(e.g. csv files).
+The Visium Distance Plotter is a tool that offers a range of plots for analyzing visium single-cell data(e.g. csv files).
 
 ## Installation/Setup of Visium Distance Plotting Tool:
 You can install Visium Distance Plotting Tool via git:
 ```
-git clone <clone-link>
+git clone [<clone-link>](https://github.com/utdal/visium_distance_plots.git)
 ```
 
-
 ## Functionality
-It is recommended to run all the functionalities in the following order, as input to few functionalities are tied to output of other functionalities.
+It is recommended to run all the functionalities in the following order, as input to a functionality is dependent on the output of another functionality.
 - Generate distance matrix
 - Generate plots:
   - Male and Female Histogram Distribution Plot
@@ -19,21 +18,21 @@ It is recommended to run all the functionalities in the following order, as inpu
   - Scatter Plots based on neuronal identity and gene expression
   - Heatmap on the distance matrix
 
-Throughout the tool, all the methods are provided with necessary logging, hence one would easily be able to track what are all the runs and if the tool runs into any errors, one can easily debug and get to the bottom of the issue swiftly.
+Throughout the tool, all the methods are provided with necessary logging, hence one would easily be able to track all the runs and if the tool runs into any errors, one can easily debug and get to the bottom of the issue swiftly.
 
 
 ### Details about the functionality of each package are below.
 ##### Generating distance matrix
-Here the distance matrixes between the barcode-of-interest and a sample dataset is calculated.
-These distance matrises can later be used to further analysis, here in this pipeline we have a heatmap being created.
+Here the distance matrixes between the barcode-of-interest and a sample dataset is calculated. Further analysis utilizes these distance matrices, including the generation of heatmaps within the pipeline.
 
-Note: When we say distance, we refer to Euclidean distance as the visium datasets we have (X, Y) co-ordinates, that enables us to calculate the distance, unline if we only have barcodes, then we prefer no. of mismatches in the barcodes(sequence alignment) or GC-content.
+Note: When we say distance, we refer to Euclidean distance as the visium datasets we have (X, Y) co-ordinates, that enables us to calculate the absolute distance between the two points.
 
 ##### Generate plots
-This method generated multiple charts as listed above, and one can easily understand the visium data by looking at these charts. As an extra layer, we have few interactive charts as well.
+The aforementioned functionality produces a variety of charts, which effectively convey the information contained in the visium data. Additionally, there are a few interactive charts available, adding another dimension to the data.
 
 ## How to run the Visium Distance Plotting Tool
 We have used `click` which enables the users to interactively provide the run-time arguments if and when needed. It is understood that python is installed and a new environment is created for running this tool.
+
 
 ### Running the tool in an IDE
 1. Open this project in PyCharm/VSCode
