@@ -18,7 +18,7 @@ It is recommended to run all the functionalities in the following order, as inpu
   - Scatter Plots based on neuronal identity and gene expression
   - Heatmap on the distance matrix
 
-Throughout the tool, all the methods are provided with necessary logging, hence one would easily be able to track all the runs and if the tool runs into any errors, one can easily debug and get to the bottom of the issue swiftly.
+Throughout the tool, all the methods are provided with necessary logging, hence one would easily be able to track all the runs and if the tool runs into any errors, one can easily debug and get to the bottom of the issue swiftly. The tool logs are contained in the directory: `/Logs`.
 
 
 ### Details about the functionality of each package are below.
