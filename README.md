@@ -5,7 +5,7 @@ The Visium Distance Plotter is a tool that offers a range of plots for analyzing
 ## Installation/Setup of Visium Distance Plotting Tool:
 You can install Visium Distance Plotting Tool via git:
 ```
-git clone [<clone-link>](https://github.com/utdal/visium_distance_plots.git)
+git clone https://github.com/utdal/visium_distance_plots.git
 ```
 
 ## Functionality
