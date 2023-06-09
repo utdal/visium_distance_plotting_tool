@@ -39,31 +39,31 @@ We have used `click` which enables the users to interactively provide the run-ti
 2. Check and create a new environment for this tool.
 3. Install all the requirements i.e. as listed in the `requirements.txt`.
    > `pip install -r requirements.txt`
-4. Run the file `immune_neurons_distances.py`
+
+4. **metadata.csv** should be populated accordingly with the appropriate gender that applies to a particular Neuronal_Ident file as shown below;
+   ![metadata file](misc/metadata.PNG)
+
+5. Run the file `immune_neurons_distances.py`
    Inputs needed during the run time:
    > - Final_matrix: Directory path to final matrix
    > 
    >   Ex. `/path/to/final_matrix_space_ranger`
-
    > - Neuronal_barcodes: Directory path to neuronal barcodes
    > 
    >   Ex. `/path/to/neurons_ident`
-
    > - Processed_files: Directory path where the output files should be stored
    > 
    >   Ex. `/path/to`
    >
    >   Here the output files are now stored at the same directory path where `Final_matrix` and `Neuronal_barcodes` are present 
-   
    > - Barcodes_of_interest: Barcodes on which the analysis needs to be run
    >   Note: Here the barcodes should be separated with a comma, no extra spaces should be present in the input
    > 
    >   Ex. `CD4,CROT,PHTF2,USP13,ADCK1,FSCN1,SPTBN1,POLG,TSR2,UCK2,ZFAND2B`
-   
    > - Scaling_factor: Scaling factor is a factor used while calculating the euclidian distances in the cdist() function.
    > 
    >   Ex. `12`
-5. Provide the arguments needed interactively. Now the distance matrix's and plots are generated in the directory: `/Processed_files/runs/<unique_ten_digit_dir_code>`. Usually once the run is completed, this directory is printed out in the return message.
+6. Provide the arguments needed interactively. Now the distance matrix's and plots are generated in the directory: `/Processed_files/runs/<unique_ten_digit_dir_code>`. Usually once the run is completed, this directory is printed out in the return message.
 
 ### Running the tool from command-line
 1. Activate python environment using conda(`conda activate visdistplot`)/by running the **activate** source file.
