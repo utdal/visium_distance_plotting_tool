@@ -8,6 +8,7 @@ You can install Visium Distance Plotting Tool via git:
 git clone https://github.com/utdal/visium_distance_plots.git
 ```
 
+
 ## Functionality
 It is recommended to run all the functionalities in the following order, as input to a functionality is dependent on the output of another functionality.
 - Generate distance matrix
@@ -41,6 +42,7 @@ We have used `click` which enables the users to interactively provide the run-ti
    > `pip install -r requirements.txt`
 
 4. **metadata.csv** should be populated accordingly with the appropriate gender that applies to a particular Neuronal_Ident file as shown below;
+
    ![metadata file](misc/metadata.PNG)
 
 5. Run the file `immune_neurons_distances.py`
