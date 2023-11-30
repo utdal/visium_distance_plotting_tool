@@ -41,7 +41,7 @@ We have used `click` which enables the users to interactively provide the run-ti
 3. Install all the requirements i.e. as listed in the `requirements.txt`.
    > `pip install -r requirements.txt`
 
-4. **metadata.csv** should be populated accordingly with the appropriate gender that applies to a particular Neuronal_Ident file as shown below;
+4. **metadata.csv** should be populated accordingly with the appropriate gender that applies to a particular Neuronal_Ident file as shown below, along with the sample metadata such as tissue_positions & scalefactors_sample.json files;
 
    ![metadata file](misc/metadata.png)
 
