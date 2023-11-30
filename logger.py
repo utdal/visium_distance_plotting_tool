@@ -1,7 +1,7 @@
 from datetime import datetime
-import logging, logging.handlers
+import logging, logging.handlers, os
 
-log_folder_path = r"/Users/nikhil/Downloads/Visium_euclidean_dist/Logs/"
+log_folder_path = os.path.join(os.getcwd(), 'Logs')
 log_file = log_folder_path+"TRAP_analysis_log_"+str(datetime.now().strftime("%d-%m-%Y"))+".txt"
 try:
     my_logger = logging.getLogger(__name__)
