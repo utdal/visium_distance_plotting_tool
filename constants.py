@@ -32,7 +32,7 @@ IDENT = 'ident'
 CORD = 'Neur_coordinate_plot'
 CORD_BAR = 'Neur_coordinate_plot_barcode'
 CORD_SCATTER = 'Neur_coordinate_plot_based_on_barcode_identity'
-SEX = 'sex'
+METADATA_FILE = 'metadata.csv'
 
 # response_template
 response_template = {'Status': None,
@@ -67,3 +67,6 @@ nociceps = ['Putative C-LTMRs', 'TRPA1+ nociceptors', 'Pruritogen receptor enric
 
 non_nociceps = ['Aß SA LTMRs', 'Proprioceptors', 'Aß RA LTMRs', 'Ad HTMRs', 'Ad LTMR']
 
+final_mat = "final_matrix"
+neuronal_barcodes = "neuronal_barcodes"
+scaling_fac = "scaling_factor"
