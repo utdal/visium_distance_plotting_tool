@@ -1,6 +1,6 @@
 # Visium Distance Plotting Tool (Euclidian Distances)
 
-The Visium Distance Plotter is a tool that offers a range of plots for analyzing visium single-cell data(e.g. csv files).
+The Visium Distance Plotting Tool is a python-based application that offers a range of interactive plots for analyzing visium single-cell data(e.g. csv files).
 
 ## Installation/Setup of Visium Distance Plotting Tool:
 You can install Visium Distance Plotting Tool via git:
@@ -88,6 +88,12 @@ If the run is successful, we get the following output;
 The output is predominantly is distance matrices and plots, should be in the `Processed_files` directory provided during 
 the run-time or the plots and matrices directory path is displayed in the `response`, as shown above.
 
+Here are some examples:
+
+| ![Plot 1](misc/barcode_indentity_and_neur_identity.PNG) | ![Plot 2](misc/strip_plot.PNG) | ![Plot 3](misc/barcode_indeity.PNG) |
+| --- |--------------------------------| --- |
+| ![Plot 4](misc/male_vs_female_histogram.PNG) | ![Plot 5](misc/heatmap.PNG)    | ![Plot 6](misc/mean_bar_plot.PNG) |
+
+
 ### License
 License information can be found in the LICENSE file.
-
