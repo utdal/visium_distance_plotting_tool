@@ -147,7 +147,8 @@ def generate_immune_neuronal_distance_matrix(final_matrix_fp: str,
                 temp_pixel_mer_df = final_matrix_df.merge(pixel_df, on="Barcodes", how="left")   # final_matrix_df.merge(pixel_df, on="Barcodes", how="left").head()
                 final_matrix_df = temp_pixel_mer_df[["Barcodes", "x_pixel", "y_pixel", "Gene ID", "Gene Name", "Gene Expression"]]
                 final_matrix_df = final_matrix_df.rename(columns={"x_pixel": "X", "y_pixel": "Y"})
-
+                initial_final_matrix = final_matrix_df
+                
                 mat, neur = str(final_matrix_file.split('.')[0]), str(neuronal_identity_file.split('.')[0])
                 neuronal_barcode_df = pd.read_csv(os.path.join(neuronal_barcodes_identity_fp, neuronal_identity_file))
                 neurons_list = neuronal_barcode_df[constants.BARCODES].to_list()
