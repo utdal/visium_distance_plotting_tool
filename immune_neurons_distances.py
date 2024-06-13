@@ -3,8 +3,8 @@ from logger import my_logger
 import constants as constants
 from datetime import datetime
 from scipy.spatial import distance
-import pandas as pd, matplotlib as mpl, os, click, random, string, json
-from generate_plots import plot_immune_neur_distances, generate_scatter_plot_for_final_neuronal_barcodes
+import pandas as pd, matplotlib as mpl, os, click, random, string, json, seaborn as sns
+from generate_plots import plot_immune_neur_distances, generate_scatter_plot_for_final_neuronal_barcodes, generate_cord_plot
 
 
 # Run this file and provide the necessary metadata.csv along with Final_matrix & Neuronal_ident files to
@@ -83,14 +83,7 @@ def generate_immune_neuronal_distance_matrix(final_matrix_fp: str,
     """
     try:
         start_time = datetime.now()
-        label_size = 30
         response_template = constants.response_template
-        mpl.rcParams['xtick.labelsize'] = label_size
-        mpl.rcParams['ytick.labelsize'] = label_size
-        mpl.rcParams["font.sans-serif"] = ["Arial"]
-        mpl.rcParams["font.family"] = "Arial"
-        mpl.rcParams['pdf.fonttype'] = 42
-        mpl.rcParams['ps.fonttype'] = 42
 
         processed_files_dir = file_path + os.sep + constants.PROCESSED_FILES
         runs_fp = processed_files_dir + os.sep + constants.RUNS
@@ -140,9 +133,7 @@ def generate_immune_neuronal_distance_matrix(final_matrix_fp: str,
                                                          constants.SEX, constants.scaling_fac], skiprows=1)
 
         if barcodes_of_interest is not None:
-            for final_matrix_file, neuronal_identity_file, scaling_factor_dir in zip(metadata_df[constants.final_mat],
-                                                                                 metadata_df[constants.neuronal_barcodes],
-                                                                                 metadata_df[constants.scaling_fac]):
+            for final_matrix_file, neuronal_identity_file, scaling_factor_dir in zip(metadata_df[constants.final_mat], metadata_df[constants.neuronal_barcodes], metadata_df[constants.scaling_fac]):
                 # Scaling Factor
                 with open(os.path.join(scaling_factor_dir, [i for i in os.listdir(scaling_factor_dir) if i.endswith(".json")][0]), "r") as f:
                     json_data = json.load(f)
@@ -180,9 +171,16 @@ def generate_immune_neuronal_distance_matrix(final_matrix_fp: str,
                                 barcode))
 
                     # Scatter Plots - FinalMatrix, NeuronalBarcodes and Barcode
-                    generate_scatter_plot_for_final_neuronal_barcodes(final_matrix_fp, neuronal_barcodes_identity_fp,
-                                                                      final_matrix_file, neuronal_identity_file, barcode,
-                                                                      plots_filepath)
+                    generate_scatter_plot_for_final_neuronal_barcodes(initial_final_matrix,  updated_final_matrix_df,
+                                                                       neurons_df, final_matrix_file, neuronal_identity_file,
+                                                                       barcode, plots_filepath, neuronal_barcode_df)
+                    # Co-ordinate plot
+                    sns.set_context("paper")
+                    sns.set(rc={'figure.figsize': (20, 15)})
+                    sns.set_style("whitegrid")
+                    sns.set(style="ticks")
+                    temp_fig_path = plots_filepath + os.sep + str(barcode) + os.sep + "{}_".format(constants.CORD) + str(final_matrix_file.split('.')[0]) + constants.PDF_FILE
+                    generate_cord_plot(final_matrix_df, temp_fig_path)
 
                     '''
                     
@@ -225,6 +223,13 @@ def generate_immune_neuronal_distance_matrix(final_matrix_fp: str,
         else:
             raise Exception("No barcodes are provided to compare with the given data.")
 
+        label_size = 30
+        mpl.rcParams['xtick.labelsize'] = label_size
+        mpl.rcParams['ytick.labelsize'] = label_size
+        mpl.rcParams["font.sans-serif"] = ["Arial"]
+        mpl.rcParams["font.family"] = "Arial"
+        mpl.rcParams['pdf.fonttype'] = 42
+        mpl.rcParams['ps.fonttype'] = 42
         plot_immune_neur_distances(run_id_path.replace("\\", "/"), final_matrix_fp,
                                    neuronal_barcodes_identity_fp, barcodes_of_interest)  # plots func call
 
