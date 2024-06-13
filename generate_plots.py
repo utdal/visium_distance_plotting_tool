@@ -7,8 +7,7 @@ import constants as constants, os, pandas as pd, matplotlib as mpl, matplotlib.p
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 
-def plot_immune_neur_distances(filepath: str, final_matrix_fp: str,
-                               neuronal_barcodes_identity_fp: str, barcodes_of_interest: list):
+def plot_immune_neur_distances(filepath: str):  # final_matrix_fp: str, neuronal_barcodes_identity_fp: str, barcodes_of_interest: list)
     """
     :param filepath:
     Example: C:/Users/NXI220005/Desktop/Visium_analysis/Processed_files/runs/5BFG3wbBgd
@@ -39,6 +38,7 @@ def plot_immune_neur_distances(filepath: str, final_matrix_fp: str,
                     male_file_list.append(file)
                 if any(string in file for string in female_list) and 'distance' in file:
                     female_file_list.append(file)
+            male_file_list, female_file_list = list(set(male_file_list)), list(set(female_file_list))
 
             if not os.path.exists(os.path.join(filepath, constants.PLOTS, str(barcode_dir))):
                 os.makedirs(os.path.join(filepath, constants.PLOTS, str(barcode_dir)))
@@ -76,6 +76,7 @@ def plot_immune_neur_distances(filepath: str, final_matrix_fp: str,
                     male_stat_file_list.append(file)
                 if any(string in file for string in female_list) and 'stat' in file:
                     female_stat_file_list.append(file)
+            male_stat_file_list, female_stat_file_list = list(set(male_stat_file_list)), list(set(female_stat_file_list))
 
             for male_file in sorted(male_stat_file_list):
                 temp_df_male = pd.read_csv(plots_data_dir + os.sep + barcode_dir + os.sep + male_file)
@@ -93,9 +94,9 @@ def plot_immune_neur_distances(filepath: str, final_matrix_fp: str,
                                     color_discrete_sequence=['bisque', 'burlywood'])
             hist_fig.update_layout(plot_bgcolor="white")
             hist_fig.update_xaxes(gridcolor='black', griddash='dash', minor_griddash="dot")
-            hist_fig.update_xaxes(showline=True, linewidth=1, linecolor='black',
-                                  mirror=True, title_text='Male and Female Distribution')
+            hist_fig.update_xaxes(showline=True, linewidth=1, linecolor='black', mirror=True, title_text='Male and Female Distribution')
             hist_fig.update_yaxes(showline=True, linewidth=1, linecolor='black', mirror=True, title_text='Frequency')
+            hist_fig.update_traces(marker_line_color='black', marker_line_width=0.25)
             temp_plot_name = plots_filepath + os.sep + str(barcode_dir) + os.sep + '{}_male_and_female_histogram'.format(
                 barcode_dir) + constants.HTML_FILE
             pio.write_html(hist_fig, file=temp_plot_name, auto_open=False)
@@ -153,33 +154,18 @@ def plot_immune_neur_distances(filepath: str, final_matrix_fp: str,
             # ####################################################
             for tendency in [constants.MEAN, constants.MEDIAN,
                              constants.MIN, constants.MAX]:
-                fig_bar_strip = sns.barplot(y=tendency, x=constants.IDENT, data=df_concat,
+                fig_bar_strip = sns.barplot(y=tendency, x=constants.IDENT, data=df_concat, palette=constants.COLOR_PAL,
                                             hue=constants.SEX, alpha=0.95, capsize=0.04)
                 fig_bar_strip.set_xlabel('Cell-type based on gender/sex')
                 plt.gca().get_yaxis().get_major_formatter().set_scientific(False)
                 plt.gca().set_xticklabels(plt.gca().get_xticklabels(), rotation=15)
                 fig_bar_strip.set_title("{} -- {}: Round 1 and 2".format(tendency.upper(), barcode_dir))
                 fig_bar_strip = sns_fig.get_figure()
+                plt.legend(loc='upper right', title=constants.SEX.capitalize())
                 fig_bar_strip.savefig(
                     plots_filepath + os.sep + str(barcode_dir) + os.sep + '{}_{}_bar_plot'.format(
                         tendency, barcode_dir) + constants.PDF_FILE)
                 plt.clf()  # empty the plot
-
-            col_names = constants.COLNAMES_VISIUM_SINGLE_NEURONS
-            for final_matrix_file in sorted(os.listdir(final_matrix_fp)):
-                print("Generating neuron co-ordinate plot for -- {}".format(final_matrix_file))
-                my_logger.info("Generating neuron co-ordinate plot for -- {}".format(final_matrix_file))
-                final_matrix_df = pd.read_csv(final_matrix_fp + os.sep + final_matrix_file, names=col_names, header=None)
-                ref_data_fp = list(metadata_df[metadata_df[constants.final_mat] == final_matrix_file]["scaling_factor"])[0]
-                ref_data_df = pd.read_csv(ref_data_fp + os.sep +
-                                          [i for i in os.listdir(ref_data_fp) if i.endswith(".csv")][0],
-                                          names=["Barcodes", "Z", "X", "Y", "x_pixel", "y_pixel"])
-                temp_pixel_mer_df = final_matrix_df.merge(ref_data_df, on="Barcodes", how="left")
-                final_matrix_df = temp_pixel_mer_df[["Barcodes", "x_pixel", "y_pixel", "Gene ID", "Gene Name", "Gene Expression"]]
-                final_matrix_df = final_matrix_df.rename(columns={"x_pixel": "X", "y_pixel": "Y"})
-                temp_fig_path = plots_filepath + os.sep + str(
-                    barcode_dir) + os.sep + "{}_".format(constants.CORD) + str(final_matrix_file.split('.')[0]) + constants.PDF_FILE
-                generate_cord_plot(final_matrix_df, temp_fig_path)
 
             '''
 
@@ -212,7 +198,7 @@ def generate_cord_plot(dataframe, fig_path):
         heatmap, xedges, yedges = np.histogram2d(dataframe[constants.X],
                                                  dataframe[constants.Y], bins=50)
         p = plt.imshow(heatmap.T, extent=[xedges[0], xedges[-1],
-                                      yedges[0], yedges[-1]], origin='lower', aspect=0.5)
+                                      yedges[0], yedges[-1]], origin='lower', aspect='auto')
         cb = plt.colorbar()
         cb.set_label('Binned counts')
         plt.xlabel("Bins of X Co-ordinates")
@@ -226,10 +212,9 @@ def generate_cord_plot(dataframe, fig_path):
         return error_msg
 
 
-def generate_scatter_plot_for_final_neuronal_barcodes(final_matrix_fp, neuronal_barcodes_identity_fp,
-                                                      final_matrix_file, neuronal_identity_file, barcode,
-                                                      plots_filepath):
-    col_names = constants.COLNAMES_VISIUM_SINGLE_NEURONS
+def generate_scatter_plot_for_final_neuronal_barcodes(final_matrix_df, updated_final_matrix_df, neurons_df,
+                                                       final_matrix_file, neuronal_identity_file, barcode,
+                                                       plots_filepath, neuronal_barcode_df):
     barcode_dir = plots_filepath + os.sep + str(barcode)
     if not os.path.exists(barcode_dir):
         os.makedirs(barcode_dir)
@@ -241,57 +226,34 @@ def generate_scatter_plot_for_final_neuronal_barcodes(final_matrix_fp, neuronal_
             barcode, neuronal_identity_file, final_matrix_file))
 
     COLOR_DICT = {i: j for i, j in zip(constants.IDENT_LIST, constants.COLOR_LIST)}
-    final_matrix_df = pd.read_csv(final_matrix_fp + os.sep + final_matrix_file, names=col_names)
-    metadata_df = pd.read_csv('metadata.csv')
-    ref_data_fp = list(metadata_df[metadata_df[constants.final_mat] == final_matrix_file]["scaling_factor"])[0]
-    ref_data_df = pd.read_csv(ref_data_fp + os.sep +
-                              [i for i in os.listdir(ref_data_fp) if i.endswith(".csv")][0],
-                              names=["Barcodes", "Z", "X", "Y", "x_pixel", "y_pixel"])
-    temp_pixel_mer_df = final_matrix_df.merge(ref_data_df, on="Barcodes", how="left")
-    final_matrix_df = temp_pixel_mer_df[["Barcodes", "x_pixel", "y_pixel", "Gene ID", "Gene Name", "Gene Expression"]]
-    final_matrix_df = final_matrix_df.rename(columns={"x_pixel": "X", "y_pixel": "Y"})
+    final_matrix_df_filtered_barcode, final_matrix_df_filtered_neuronal_barcode = updated_final_matrix_df, neurons_df
 
-    neuronal_barcode_df = pd.read_csv(neuronal_barcodes_identity_fp + os.sep + neuronal_identity_file)
-    neurons_list = neuronal_barcode_df[constants.BARCODES].to_list()
-
-    final_matrix_df_filtered_barcode = final_matrix_df.loc[final_matrix_df[constants.GENENAME] == barcode]
-    final_matrix_df_filtered_neuronal_barcode = final_matrix_df[final_matrix_df[constants.BARCODES].isin(neurons_list)]
-
-    final_matrix_df = final_matrix_df.loc[:,
-                      [constants.BARCODES, constants.X, constants.Y, constants.GENE_EXPRESSION]].drop_duplicates()
-    final_matrix_df_filtered_barcode = final_matrix_df_filtered_barcode.loc[:,
-                                       [constants.BARCODES, constants.X, constants.Y,
-                                        constants.GENE_EXPRESSION]].drop_duplicates()
-    final_matrix_df_filtered_neuronal_barcode = final_matrix_df_filtered_neuronal_barcode.loc[:,
-                                                [constants.BARCODES, constants.X, constants.Y,
-                                                 constants.GENE_EXPRESSION]].drop_duplicates()
+    final_matrix_df = final_matrix_df.loc[:, [constants.BARCODES, constants.X, constants.Y, constants.GENE_EXPRESSION]].drop_duplicates()
+    final_matrix_df_filtered_barcode = final_matrix_df_filtered_barcode.loc[:, [constants.BARCODES, constants.X, constants.Y, constants.GENE_EXPRESSION]].drop_duplicates()
+    final_matrix_df_filtered_neuronal_barcode = final_matrix_df_filtered_neuronal_barcode.loc[:, [constants.BARCODES, constants.X, constants.Y, constants.GENE_EXPRESSION]].drop_duplicates()
 
     barcode_to_Ident = dict(zip(neuronal_barcode_df[constants.BARCODES], neuronal_barcode_df[constants.IDENT]))
-    final_matrix_df_filtered_neuronal_barcode[constants.IDENT] = final_matrix_df_filtered_neuronal_barcode[
-        constants.BARCODES].map(barcode_to_Ident)
-    final_matrix_df_filtered_neuronal_barcode_limited = final_matrix_df_filtered_neuronal_barcode.loc[
-        final_matrix_df_filtered_neuronal_barcode[constants.IDENT].isin(constants.FILTERED_IDENT_LIST)]
-    final_matrix_nocicep_df = final_matrix_df_filtered_neuronal_barcode[
-        final_matrix_df_filtered_neuronal_barcode[constants.IDENT].isin(constants.nociceps)]
-    final_matrix_non_nocicep_df = final_matrix_df_filtered_neuronal_barcode[
-        final_matrix_df_filtered_neuronal_barcode[constants.IDENT].isin(constants.non_nociceps)]
+
+    final_matrix_df_filtered_neuronal_barcode[constants.IDENT] = final_matrix_df_filtered_neuronal_barcode[constants.BARCODES].map(barcode_to_Ident)
+    final_matrix_df_filtered_neuronal_barcode_limited = final_matrix_df_filtered_neuronal_barcode.loc[final_matrix_df_filtered_neuronal_barcode[constants.IDENT].isin(constants.FILTERED_IDENT_LIST)]
+    final_matrix_nocicep_df = final_matrix_df_filtered_neuronal_barcode[final_matrix_df_filtered_neuronal_barcode[constants.IDENT].isin(constants.nociceps)]
+    final_matrix_non_nocicep_df = final_matrix_df_filtered_neuronal_barcode[final_matrix_df_filtered_neuronal_barcode[constants.IDENT].isin(constants.non_nociceps)]
 
     fig, fig1, fig2 = go.Figure(), go.Figure(), go.Figure()
     fig.add_trace(go.Scatter(x=final_matrix_df[constants.X], y=final_matrix_df[constants.Y],
                              mode='markers', name='Tissue', marker=dict(size=13.5, color='#DCDCDC', opacity=0.3),
-                             text=final_matrix_df[['Barcodes']], hovertemplate='X: %{x}<br>Y: %{y}<br>Barcode: %{text}<extra></extra>'))
+                             text=final_matrix_df[['Barcodes']], hovertemplate='X: %{x:.f}<br>Y: %{y:.f}<br>Barcode: %{text}<extra></extra>'))
     fig.add_trace(go.Scatter(x=final_matrix_df_filtered_neuronal_barcode[constants.X], y=final_matrix_df_filtered_neuronal_barcode[constants.Y],
                              mode='markers', name='Neuronal Barcode', marker=dict(color='#7f8de1', size=14, opacity=0.5),
-                             text=final_matrix_df_filtered_neuronal_barcode_limited[['Barcodes']], hovertemplate='X: %{x}<br>Y: %{y}<br>Barcode: %{text}<extra></extra>'))
-    fig.add_trace(go.Scatter(x=final_matrix_df_filtered_barcode[constants.X], y=final_matrix_df_filtered_barcode['Y'],
+                             text=final_matrix_df_filtered_neuronal_barcode_limited[['Barcodes']], hovertemplate='X: %{x:.f}<br>Y: %{y:.f}<br>Barcode: %{text}<extra></extra>'))
+    fig.add_trace(go.Scatter(x=final_matrix_df_filtered_barcode[constants.X], y=final_matrix_df_filtered_barcode[constants.Y],
                              mode='markers', name='Barcode of Interest: {}'.format(barcode), marker=dict(size=14, color='#ff7f50', opacity=0.8),
                              text=final_matrix_df_filtered_barcode[['Gene Expression']], hovertemplate='X: %{x}<br>Y: %{y}<br>Gene Expression: %{text}<extra></extra>'))
-    fig.update_layout(
-        title='Scatter Plot of Final Matrix: {}, Neuronal Barcodes and {} markers'.format(final_matrix_file.split('.')[0], barcode),
-        xaxis_title='X co-ordinate in final matrix', yaxis_title='Y co-ordinate in final matrix',
-        legend_title='Neuron type', plot_bgcolor='white', paper_bgcolor='white',
-        xaxis=dict(showline=True, linewidth=1, linecolor='black', showgrid=True, gridcolor='lightgray', mirror=True),
-        yaxis=dict(showline=True, linewidth=1, linecolor='black', showgrid=True, gridcolor='lightgray', mirror=True))
+    fig.update_layout(title='Scatter Plot of Final Matrix: {}, Neuronal Barcodes and {} markers'.format(final_matrix_file.split('.')[0], barcode),
+                      xaxis_title='X co-ordinate in final matrix', yaxis_title='Y co-ordinate in final matrix',
+                      legend_title='Neuron type', plot_bgcolor='white', paper_bgcolor='white',
+                      xaxis=dict(showline=True, linewidth=1, linecolor='black', showgrid=True, gridcolor='lightgray', mirror=True, tickformat='.0f'),
+                      yaxis=dict(showline=True, linewidth=1, linecolor='black', showgrid=True, gridcolor='lightgray', mirror=True, tickformat='.0f'))
     fig.write_html(os.path.join(plots_filepath, str(barcode), "{}_".format(constants.CORD_SCATTER)+str(final_matrix_file.split('.')[0])+constants.HTML_FILE))
     fig.write_image(os.path.join(plots_filepath, str(barcode), "{}_".format(constants.CORD_SCATTER)+str(final_matrix_file.split('.')[0])+constants.PDF_FILE), width=1500, height=950)
 
@@ -300,42 +262,42 @@ def generate_scatter_plot_for_final_neuronal_barcodes(final_matrix_fp, neuronal_
 
     fig1.add_trace(go.Scatter(x=final_matrix_df[constants.X], y=final_matrix_df[constants.Y],
                               mode='markers', name='Tissue', marker=dict(size=13.5, color='#DCDCDC', opacity=0.3),
-                              text=final_matrix_df[['Barcodes']], hovertemplate='X: %{x}<br>Y: %{y}<br>Barcode: %{text}<extra></extra>'))
+                              text=final_matrix_df[['Barcodes']], hovertemplate='X: %{x:.f}<br>Y: %{y:.f}<br>Barcode: %{text}<extra></extra>'))
     fig1.add_trace(go.Scatter(x=final_matrix_nocicep_df[constants.X], y=final_matrix_nocicep_df[constants.Y],
                               mode='markers', name='Nociceptor Neuronal Barcodes', marker=dict(color="#b9f0c5", size=14, opacity=0.5),
-                              text=final_matrix_df_filtered_neuronal_barcode_limited[['Barcodes']], hovertemplate='X: %{x}<br>Y: %{y}<br>Barcode: %{text}<extra></extra>'))
+                              text=final_matrix_df_filtered_neuronal_barcode_limited[['Barcodes']], hovertemplate='X: %{x:.f}<br>Y: %{y:.f}<br>Barcode: %{text}<extra></extra>'))
     fig1.add_trace(go.Scatter(x=final_matrix_non_nocicep_df[constants.X], y=final_matrix_non_nocicep_df[constants.Y],
                               mode='markers', name='Non-nociceptor Neuronal Barcodes', marker=dict(color="#a8b6ed", size=14, opacity=0.5),
-                              text=final_matrix_df_filtered_neuronal_barcode_limited[['Barcodes']], hovertemplate='X: %{x}<br>Y: %{y}<br>Barcode: %{text}<extra></extra>'))
-    fig1.add_trace(go.Scatter(x=final_matrix_df_filtered_barcode[constants.X], y=final_matrix_df_filtered_barcode['Y'],
+                              text=final_matrix_df_filtered_neuronal_barcode_limited[['Barcodes']], hovertemplate='X: %{x:.f}<br>Y: %{y:.f}<br>Barcode: %{text}<extra></extra>'))
+    fig1.add_trace(go.Scatter(x=final_matrix_df_filtered_barcode[constants.X], y=final_matrix_df_filtered_barcode[constants.Y],
                               mode='markers', name='Barcode of Interest: {}'.format(barcode), marker=dict(size=14, color='#ff7f50', opacity=0.8),
                               text=final_matrix_df_filtered_barcode[['Gene Expression']], hovertemplate='X: %{x}<br>Y: %{y}<br>Gene Expression: %{text}<extra></extra>'))
     fig1.update_layout(title='Scatter Plot of Final Matrix: {}, Neuronal Barcodes and {} markers'.format(final_matrix_file.split('.')[0], barcode),
-        xaxis_title='X co-ordinate in final matrix', yaxis_title='Y co-ordinate in final matrix',
-        legend_title='Neuron type', plot_bgcolor='white', paper_bgcolor='white',
-        xaxis=dict(showline=True, linewidth=1, linecolor='black', showgrid=True, gridcolor='lightgray', mirror=True),
-        yaxis=dict(showline=True, linewidth=1, linecolor='black', showgrid=True, gridcolor='lightgray', mirror=True))
+                       xaxis_title='X co-ordinate in final matrix', yaxis_title='Y co-ordinate in final matrix',
+                       legend_title='Neuron type', plot_bgcolor='white', paper_bgcolor='white',
+                       xaxis=dict(showline=True, linewidth=1, linecolor='black', showgrid=True, gridcolor='lightgray', mirror=True, tickformat='.0f'),
+                       yaxis=dict(showline=True, linewidth=1, linecolor='black', showgrid=True, gridcolor='lightgray', mirror=True, tickformat='.0f'))
     fig1.write_html(os.path.join(plots_filepath, str(barcode), "{}_".format(constants.CORD_SCATTER)+"and_neur_indentity_"+str(final_matrix_file.split('.')[0])+constants.HTML_FILE))
     fig1.write_image(os.path.join(plots_filepath, str(barcode), "{}_".format(constants.CORD_SCATTER)+"and_neur_indentity_"+str(final_matrix_file.split('.')[0])+constants.PDF_FILE), width=1500, height=950)
 
     fig2.add_trace(go.Scatter(x=final_matrix_df[constants.X], y=final_matrix_df[constants.Y],
                               mode='markers', name='Tissue', marker=dict(size=13.5, color='#DCDCDC', opacity=0.3),
-                              text=final_matrix_df[['Barcodes']], hovertemplate='X: %{x}<br>Y: %{y}<br>Barcode: %{text}<extra></extra>'))
+                              text=final_matrix_df[['Barcodes']], hovertemplate='X: %{x:.f}<br>Y: %{y:.f}<br>Barcode: %{text}<extra></extra>'))
     fig2.add_trace(go.Scatter(x=final_matrix_df_filtered_neuronal_barcode_limited[constants.X],
                               y=final_matrix_df_filtered_neuronal_barcode_limited[constants.Y],
                               mode='markers', name='Neuronal Barcode', marker=dict(color='#7f8de1', size=14, opacity=0.5),
                               text=final_matrix_df_filtered_neuronal_barcode_limited[['Barcodes']],
-                              hovertemplate='X: %{x}<br>Y: %{y}<br>Barcode: %{text}<extra></extra>'))
-    fig2.add_trace(go.Scatter(x=final_matrix_df_filtered_barcode[constants.X], y=final_matrix_df_filtered_barcode['Y'],
+                              hovertemplate='X: %{x:.f}<br>Y: %{y:.f}<br>Barcode: %{text}<extra></extra>'))
+    fig2.add_trace(go.Scatter(x=final_matrix_df_filtered_barcode[constants.X], y=final_matrix_df_filtered_barcode[constants.Y],
                               mode='markers', name='Barcode of Interest: {}'.format(barcode),
                               marker=dict(size=final_matrix_df_filtered_barcode[constants.GENE_EXPRESSION],
                                           sizemode='diameter', color='#f59145', sizeref=0.1),
                               text=final_matrix_df_filtered_barcode[['Gene Expression']], hovertemplate='X: %{x}<br>Y: %{y}<br>Gene Expression: %{text}<extra></extra>'))
     fig2.update_layout(title='Scatter Plot of Final Matrix: {}, Neuronal Barcodes and {} markers for Putative and Pruritogen receptors'.format(final_matrix_file.split('.')[0], barcode),
-        xaxis_title='X co-ordinate in final matrix', yaxis_title='Y co-ordinate in final matrix',
-        legend_title='Neuron type', plot_bgcolor='white', paper_bgcolor='white',
-        xaxis=dict(showline=True, linewidth=1, linecolor='black', showgrid=True, gridcolor='lightgray', mirror=True),
-        yaxis=dict(showline=True, linewidth=1, linecolor='black', showgrid=True, gridcolor='lightgray', mirror=True))
+                       xaxis_title='X co-ordinate in final matrix', yaxis_title='Y co-ordinate in final matrix',
+                       legend_title='Neuron type', plot_bgcolor='white', paper_bgcolor='white',
+                       xaxis=dict(showline=True, linewidth=1, linecolor='black', showgrid=True, gridcolor='lightgray', mirror=True, tickformat='.0f'),
+                       yaxis=dict(showline=True, linewidth=1, linecolor='black', showgrid=True, gridcolor='lightgray', mirror=True, tickformat='.0f'))
     fig2.write_html(os.path.join(plots_filepath, str(barcode), "{}_".format(constants.CORD_SCATTER)+"filtered_"+str(final_matrix_file.split('.')[0])+constants.HTML_FILE))
     fig2.write_image(os.path.join(plots_filepath, str(barcode), "{}_".format(constants.CORD_SCATTER)+"filtered_"+str(final_matrix_file.split('.')[0])+constants.PDF_FILE), width=1500, height=950)
 
