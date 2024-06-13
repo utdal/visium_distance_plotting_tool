@@ -258,8 +258,8 @@ def generate_scatter_plot_for_final_neuronal_barcodes(final_matrix_df, updated_f
                       legend_title='Neuron type', plot_bgcolor='white', paper_bgcolor='white',
                       xaxis=dict(showline=True, linewidth=1, linecolor='black', showgrid=True, gridcolor='lightgray', mirror=True, tickformat='.0f'),
                       yaxis=dict(showline=True, linewidth=1, linecolor='black', showgrid=True, gridcolor='lightgray', mirror=True, tickformat='.0f'))
-    fig.write_html(os.path.join(plots_filepath, str(barcode), "{}_".format(constants.CORD_SCATTER)+str(final_matrix_file.split('.')[0])+constants.HTML_FILE))
-    fig.write_image(os.path.join(plots_filepath, str(barcode), "{}_".format(constants.CORD_SCATTER)+str(final_matrix_file.split('.')[0])+constants.PDF_FILE), width=1500, height=950)
+    fig.write_html(os.path.join(plots_filepath, str(barcode), "{}_".format(constants.CORD_SCATTER)+str(final_matrix_file.split('.')[0])+'_'+str(neuronal_identity_file.split('.')[0])+constants.HTML_FILE))
+    fig.write_image(os.path.join(plots_filepath, str(barcode), "{}_".format(constants.CORD_SCATTER)+str(final_matrix_file.split('.')[0])+'_'+str(neuronal_identity_file.split('.')[0])+constants.PDF_FILE), width=1500, height=950)
 
     # COLOR: final_matrix_df_filtered_neuronal_barcode[constants.IDENT] color = px.colors.qualitative.G10[5]
     final_matrix_df_filtered_neuronal_barcode[constants.IDENT] = final_matrix_df_filtered_neuronal_barcode[constants.IDENT].map(COLOR_DICT)
@@ -281,8 +281,8 @@ def generate_scatter_plot_for_final_neuronal_barcodes(final_matrix_df, updated_f
                        legend_title='Neuron type', plot_bgcolor='white', paper_bgcolor='white',
                        xaxis=dict(showline=True, linewidth=1, linecolor='black', showgrid=True, gridcolor='lightgray', mirror=True, tickformat='.0f'),
                        yaxis=dict(showline=True, linewidth=1, linecolor='black', showgrid=True, gridcolor='lightgray', mirror=True, tickformat='.0f'))
-    fig1.write_html(os.path.join(plots_filepath, str(barcode), "{}_".format(constants.CORD_SCATTER)+"and_neur_indentity_"+str(final_matrix_file.split('.')[0])+constants.HTML_FILE))
-    fig1.write_image(os.path.join(plots_filepath, str(barcode), "{}_".format(constants.CORD_SCATTER)+"and_neur_indentity_"+str(final_matrix_file.split('.')[0])+constants.PDF_FILE), width=1500, height=950)
+    fig1.write_html(os.path.join(plots_filepath, str(barcode), "{}_".format(constants.CORD_SCATTER)+"and_neur_indentity_"+str(final_matrix_file.split('.')[0])+'_'+str(neuronal_identity_file.split('.')[0])+constants.HTML_FILE))
+    fig1.write_image(os.path.join(plots_filepath, str(barcode), "{}_".format(constants.CORD_SCATTER)+"and_neur_indentity_"+str(final_matrix_file.split('.')[0])+'_'+str(neuronal_identity_file.split('.')[0])+constants.PDF_FILE), width=1500, height=950)
 
     fig2.add_trace(go.Scatter(x=final_matrix_df[constants.X], y=final_matrix_df[constants.Y],
                               mode='markers', name='Tissue', marker=dict(size=13.5, color='#DCDCDC', opacity=0.3),
@@ -302,8 +302,8 @@ def generate_scatter_plot_for_final_neuronal_barcodes(final_matrix_df, updated_f
                        legend_title='Neuron type', plot_bgcolor='white', paper_bgcolor='white',
                        xaxis=dict(showline=True, linewidth=1, linecolor='black', showgrid=True, gridcolor='lightgray', mirror=True, tickformat='.0f'),
                        yaxis=dict(showline=True, linewidth=1, linecolor='black', showgrid=True, gridcolor='lightgray', mirror=True, tickformat='.0f'))
-    fig2.write_html(os.path.join(plots_filepath, str(barcode), "{}_".format(constants.CORD_SCATTER)+"filtered_"+str(final_matrix_file.split('.')[0])+constants.HTML_FILE))
-    fig2.write_image(os.path.join(plots_filepath, str(barcode), "{}_".format(constants.CORD_SCATTER)+"filtered_"+str(final_matrix_file.split('.')[0])+constants.PDF_FILE), width=1500, height=950)
+    fig2.write_html(os.path.join(plots_filepath, str(barcode), "{}_".format(constants.CORD_SCATTER)+"filtered_"+str(final_matrix_file.split('.')[0])+'_'+str(neuronal_identity_file.split('.')[0])+constants.HTML_FILE))
+    fig2.write_image(os.path.join(plots_filepath, str(barcode), "{}_".format(constants.CORD_SCATTER)+"filtered_"+str(final_matrix_file.split('.')[0])+'_'+str(neuronal_identity_file.split('.')[0])+constants.PDF_FILE), width=1500, height=950)
 
 # plot_immune_neur_distances(r"C:\Users\{username}\Desktop\Visium_spatial_analysis_eucl_distances\Processed_files\runs\UoBUBH1arl",
 #                            r"C:\Users\{username}\Desktop\Visium_spatial_analysis_eucl_distances\final_matrix_space_ranger",
