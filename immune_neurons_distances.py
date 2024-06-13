@@ -231,8 +231,10 @@ def generate_immune_neuronal_distance_matrix(final_matrix_fp: str,
         mpl.rcParams["font.family"] = "Arial"
         mpl.rcParams['pdf.fonttype'] = 42
         mpl.rcParams['ps.fonttype'] = 42
-        plot_immune_neur_distances(run_id_path.replace("\\", "/"), final_matrix_fp,
-                                   neuronal_barcodes_identity_fp, barcodes_of_interest)  # plots func call
+        
+        plot_immune_neur_distances(run_id_path.replace("\\", "/"))  # plots func call
+        # Additional parameters can be passed accordingly if new plots are being added
+        # final_matrix_fp, neuronal_barcodes_identity_fp, barcodes_of_interest
 
         my_logger.info("<---- Generating immune neural distance matrix's and plots completed ---->")
         my_logger.info("Generated results are stored to {}".format(run_id_path.replace("\\", "/")))
