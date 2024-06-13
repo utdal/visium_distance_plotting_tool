@@ -57,6 +57,7 @@ IDENT_LIST = ['Aß SA LTMRs', 'Putative C-LTMRs',
               'Putative silent nociceptors']
 FILTERED_IDENT_LIST = ['Putative silent nociceptors',  'Putative C-LTMRs', 'Pruritogen receptor enriched']
 
+COLOR_PAL = {'male': 'cornflowerblue', 'female': 'violet'}
 COLOR_LIST = ['#86baf3',  '#0b6b50', '#86baf3',  '#0b6b50',  '#86baf3',  '#86baf3',
               '#0b6b50',  '#0b6b50',  '#0b6b50',  '#86baf3', '#0b6b50',   '#0b6b50']
 COLOR_LIST1 = ['#86baf3',  '#0b6b50', '#86baf3',  '#0b6b50',  '#86baf3',  '#86baf3',
