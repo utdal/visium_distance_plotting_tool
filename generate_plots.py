@@ -48,24 +48,26 @@ def plot_immune_neur_distances(filepath: str):  # final_matrix_fp: str, neuronal
             for male in male_file_list:
                 print("Running for -- {} -- MALE".format(male))
                 my_logger.info("Running for -- {} -- MALE".format(male))
-                temp_df_male = pd.read_csv(plots_data_dir + os.sep + barcode_dir + os.sep + male)
-                temp_df_male.set_index(constants.BARCODES, inplace=True)
-                m = px.imshow(temp_df_male, aspect=True)
-                m.update_layout(title="Distance Matrix Plot for {}".format(male.split('.')[0]))
-                temp_plot_name = plots_filepath + os.sep + str(barcode_dir) + os.sep + male.split('.')[0] + '_{}_male_heatmap'.format(
-                    barcode_dir) + constants.HTML_FILE
-                m.write_html(temp_plot_name)
+                if os.path.exists(plots_data_dir + os.sep + barcode_dir + os.sep + male):
+                    temp_df_male = pd.read_csv(plots_data_dir + os.sep + barcode_dir + os.sep + male)
+                    temp_df_male.set_index(constants.BARCODES, inplace=True)
+                    m = px.imshow(temp_df_male, aspect=True)
+                    m.update_layout(title="Distance Matrix Plot for {}".format(male.split('.')[0]))
+                    temp_plot_name = plots_filepath + os.sep + str(barcode_dir) + os.sep + male.split('.')[0] + '_{}_male_heatmap'.format(
+                        barcode_dir) + constants.HTML_FILE
+                    m.write_html(temp_plot_name)
 
             for female in female_file_list:
                 print("Running for -- {} -- FEMALE".format(female))
                 my_logger.info("Running for -- {} -- FEMALE".format(female))
-                temp_df_female = pd.read_csv(plots_data_dir + os.sep + barcode_dir + os.sep + female)
-                temp_df_female.set_index(constants.BARCODES, inplace=True)
-                f = px.imshow(temp_df_female, aspect=True)
-                f.update_layout(title="Distance Matrix Plot for {}".format(female.split('.')[0]))
-                temp_plot_name = plots_filepath + os.sep + str(barcode_dir) + os.sep + female.split('.')[0] + '_{}_female_heatmap'.format(
-                    barcode_dir) + constants.HTML_FILE
-                f.write_html(temp_plot_name)
+                if os.path.exists(plots_data_dir + os.sep + barcode_dir + os.sep + female):
+                    temp_df_female = pd.read_csv(plots_data_dir + os.sep + barcode_dir + os.sep + female)
+                    temp_df_female.set_index(constants.BARCODES, inplace=True)
+                    f = px.imshow(temp_df_female, aspect=True)
+                    f.update_layout(title="Distance Matrix Plot for {}".format(female.split('.')[0]))
+                    temp_plot_name = plots_filepath + os.sep + str(barcode_dir) + os.sep + female.split('.')[0] + '_{}_female_heatmap'.format(
+                        barcode_dir) + constants.HTML_FILE
+                    f.write_html(temp_plot_name)
 
             # Plotting bar graph
             #####################################################
@@ -79,15 +81,17 @@ def plot_immune_neur_distances(filepath: str):  # final_matrix_fp: str, neuronal
             male_stat_file_list, female_stat_file_list = list(set(male_stat_file_list)), list(set(female_stat_file_list))
 
             for male_file in sorted(male_stat_file_list):
-                temp_df_male = pd.read_csv(plots_data_dir + os.sep + barcode_dir + os.sep + male_file)
-                temp_df_male[constants.SEX] = constants.MALE
-                temp_df_male.set_index(constants.BARCODES, inplace=True)
-                male_concat_list.append(temp_df_male)
+                if os.path.exists(plots_data_dir + os.sep + barcode_dir + os.sep + male_file):
+                    temp_df_male = pd.read_csv(plots_data_dir + os.sep + barcode_dir + os.sep + male_file)
+                    temp_df_male[constants.SEX] = constants.MALE
+                    temp_df_male.set_index(constants.BARCODES, inplace=True)
+                    male_concat_list.append(temp_df_male)
             for female_file in sorted(female_stat_file_list):
-                temp_df_female = pd.read_csv(plots_data_dir + os.sep + barcode_dir + os.sep + female_file)
-                temp_df_female[constants.SEX] = constants.FEMALE
-                temp_df_female.set_index(constants.BARCODES, inplace=True)
-                female_concat_list.append(temp_df_female)
+                if os.path.exists(plots_data_dir + os.sep + barcode_dir + os.sep + female_file):
+                    temp_df_female = pd.read_csv(plots_data_dir + os.sep + barcode_dir + os.sep + female_file)
+                    temp_df_female[constants.SEX] = constants.FEMALE
+                    temp_df_female.set_index(constants.BARCODES, inplace=True)
+                    female_concat_list.append(temp_df_female)
             df_concat = pd.concat([pd.concat(male_concat_list), pd.concat(female_concat_list)])
             hist_fig = px.histogram(df_concat.loc[:, [constants.MEAN, constants.MEDIAN, constants.MIN, constants.MAX,
                                                       constants.SEX]], color=constants.SEX, marginal="rug", nbins=100,
